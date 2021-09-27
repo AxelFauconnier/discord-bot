@@ -1,18 +1,15 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const {
-    downloadFromInfo,
     getInfo,
     validateURL,
  } = require('ytdl-core');
 const {
     AudioPlayerStatus,
-    StreamType,
     createAudioPlayer,
-    createAudioResource,
     joinVoiceChannel,
     getVoiceConnection,
 } = require('@discordjs/voice');
-const { createEmbedPlayMessage, processQueue } = require('../util');
+const { createEmbedPlayMessage, processQueue, createSimpleEmbed } = require('../util');
 const { Song } = require('../music/song');
 const ytsr = require('ytsr');
 
@@ -26,7 +23,7 @@ module.exports = {
             .setRequired(true)),
 	async execute(interaction) {
         let connection = getVoiceConnection(interaction.guildId);
-        const input = interaction.options.getString('input');        
+        const input = interaction.options.getString('input');
 
         if (!connection) {
             const guildId = interaction.guildId;
@@ -81,15 +78,15 @@ module.exports = {
             }
             catch(error) {
                 console.log(error);
-                await interaction.editReply({ content: 'Sorry the result I got from your search is not a video', ephemeral: true });
+                const msg = createSimpleEmbed('Sorry the result I got from your search is not a video');
+                await interaction.editReply({ embeds: [msg] });
                 return;
-            }            
+            }
         }
 
-        connection.queue.push(song);        
+        connection.queue.push(song);
         const embedMessage = createEmbedPlayMessage(song, interaction, connection.queue.length);
         await interaction.editReply({ embeds: [embedMessage] });
-        const player = connection.player;
         processQueue(connection);
 	},
 };

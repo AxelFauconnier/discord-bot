@@ -15,6 +15,11 @@ module.exports = {
             await interaction.reply('MonkaS');
             return;
         }
+        //Member must be with the bot in the same channel
+        if (connection.joinConfig.channelId !== interaction.member.voice.channelId) {
+            await interaction.reply('On ne fait pas ça ici');
+            return;
+        }
         //User index is offset i.e first song is indexed at 1 instead of 0, so index - 1 is the real index
         const index = interaction.options.getInteger('index') - 1;
         if (index >= connection.queue.length || index < 0) {

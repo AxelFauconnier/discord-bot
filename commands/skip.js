@@ -10,7 +10,7 @@ module.exports = {
         const connection = getVoiceConnection(interaction.guildId);
         if (!connection) {
             await interaction.reply({ content: 'MonkaS', ephemeral: true });
-            return;            
+            return;
         }
         //Member must be with the bot in the same channel
         if (connection.joinConfig.channelId !== interaction.member.voice.channelId) {
@@ -24,6 +24,6 @@ module.exports = {
 
         connection.player.stop();
         const msg = createSimpleEmbed('Skipped the song');
-        await interaction.reply({ embeds: [msg] });    
+        await interaction.reply({ embeds: [msg] });
     }
 };

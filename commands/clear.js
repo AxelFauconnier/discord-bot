@@ -12,6 +12,11 @@ module.exports = {
             await interaction.reply('MonkaS');
             return;
         }
+        //Member must be with the bot in the same channel
+        if (connection.joinConfig.channelId !== interaction.member.voice.channelId) {
+            await interaction.reply('On ne fait pas ça ici');
+            return;
+        }
 
         connection.queue = [];
         connection.nextSongPos = 0;
