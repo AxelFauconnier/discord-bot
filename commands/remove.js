@@ -12,7 +12,7 @@ module.exports = {
     async execute(interaction) {
         const connection = getVoiceConnection(interaction.guildId);
         if (!connection) {
-            await interaction('MonkaS');
+            await interaction.reply('MonkaS');
             return;
         }
         //User index is offset i.e first song is indexed at 1 instead of 0, so index - 1 is the real index

@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getVoiceConnection } = require('@discordjs/voice');
+const { createSimpleEmbed } = require('../util');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -8,13 +9,14 @@ module.exports = {
     async execute(interaction) {
         const connection = getVoiceConnection(interaction.guildId);
         if (!connection) {
-            await interaction('MonkaS');
+            await interaction.reply('MonkaS');
             return;
         }
 
         connection.queue = [];
         connection.nextSongPos = 0;
         connection.player.stop();
-        await interaction.reply({ content: 'queue cleared', ephemeral: false });
+        const msg = createSimpleEmbed('Cleared the queue');
+        await interaction.reply({ embeds: [msg] });
     }
 };

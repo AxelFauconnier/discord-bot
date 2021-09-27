@@ -1,4 +1,6 @@
+const { AudioPlayerStatus } = require('@discordjs/voice');
 const { MessageEmbed } = require('discord.js');
+//const { Song } = require('./music/song');
 
 function formatDuration(seconds) {
     let hour = 0;
@@ -26,6 +28,7 @@ function createEmbedPlayMessage(song, interaction, pos) {
                 .setThumbnail(song.thumbnail)
                 .setTitle(song.title)
                 .setURL(song.url)
+                .setColor('#e159a1')
                 .addFields(
                     { name: 'Duration', value: song.duration, inline: true },                    
                     { name: 'Views', value: song.views, inline: true },
@@ -50,7 +53,8 @@ function createQueueMessage(queue, nextIndex, interaction, playing) {
     }
 
     const message = new MessageEmbed().setFooter('\u200B', interaction.user.avatarURL())
-        .setTitle('Queue');
+        .setTitle('Queue')
+        .setColor('#e159a1');
 
     for(i = start; i < end; i++) {
         const item = queue[i];
@@ -68,4 +72,21 @@ function createQueueMessage(queue, nextIndex, interaction, playing) {
     return message;
 }
 
-module.exports = { createEmbedPlayMessage, createQueueMessage, formatDuration };
+function createSimpleEmbed(str) {
+    const msg = new MessageEmbed().setDescription(str).setColor('#e159a1');
+    return msg;
+}
+
+// Necessité de lock cette fonction ?
+async function processQueue(connection) {    
+    const nextSongExists = (connection.nextSongPos < connection.queue.length);
+    if (!nextSongExists || connection.player.state.status !== AudioPlayerStatus.Idle) {
+        return;
+    }
+
+    const nextSong = connection.queue[connection.nextSongPos];
+    const resource = await nextSong.createAudioResource();
+    connection.player.play(resource);
+    connection.nextSongPos++;
+}
+module.exports = { createEmbedPlayMessage, createQueueMessage, formatDuration, processQueue, createSimpleEmbed };

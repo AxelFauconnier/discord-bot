@@ -12,7 +12,7 @@ const {
     joinVoiceChannel,
     getVoiceConnection,
 } = require('@discordjs/voice');
-const { createEmbedPlayMessage } = require('../util');
+const { createEmbedPlayMessage, processQueue } = require('../util');
 const { Song } = require('../music/song');
 const ytsr = require('ytsr');
 
@@ -57,13 +57,8 @@ module.exports = {
             });
 
             player.on(AudioPlayerStatus.Idle, async () => {
-                const nextSongExists = (connection.nextSongPos < connection.queue.length);
-                if (nextSongExists) {
-                    const nextSong = connection.queue[connection.nextSongPos];
-                    const resource = await nextSong.createAudioResource();
-                    player.play(resource);
-                    connection.nextSongPos++;
-                }
+                processQueue(connection);
+                //Launch timeout ?
             });
         }
 
@@ -88,13 +83,6 @@ module.exports = {
         const embedMessage = createEmbedPlayMessage(song, interaction, connection.queue.length);
         await interaction.editReply({ embeds: [embedMessage] });
         const player = connection.player;
-        
-        // Playing the added song if the player is Idle
-        if(player.state.status === AudioPlayerStatus.Idle) {
-            const nextSong = connection.queue[connection.nextSongPos];
-            const n_rscr = await nextSong.createAudioResource();
-            player.play(n_rscr);
-            connection.nextSongPos++;
-        }
+        processQueue(connection);
 	},
 };
