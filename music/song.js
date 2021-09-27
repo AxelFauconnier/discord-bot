@@ -28,7 +28,9 @@ class Song {
     // Return a song with ytsr('search') data
     static fromSearch(result) {
         const song = result.items[0];
-        //TODO: Handle the channel scenario
+        if (song.type !== 'video') {
+            throw new Error('The first result from the search is not a video');
+        }
 
         return new Song({
             url: song.url,

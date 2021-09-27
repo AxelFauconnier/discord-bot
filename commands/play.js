@@ -76,7 +76,14 @@ module.exports = {
             song = Song.fromURL(info);
         } else {
             const result = await ytsr(input, { limit: 1 });
-            song = Song.fromSearch(result);
+            try {
+                song = Song.fromSearch(result);
+            }
+            catch(error) {
+                console.log(error);
+                await interaction.editReply({ content: 'Sorry the result I got from your search is not a video', ephemeral: true });
+                return;
+            }            
         }
 
         connection.queue.push(song);        
