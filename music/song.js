@@ -28,6 +28,7 @@ class Song {
     // Return a song with ytsr('search') data
     static fromSearch(result) {
         const song = result.items[0];
+        //TODO: Handle the channel scenario
 
         return new Song({
             url: song.url,

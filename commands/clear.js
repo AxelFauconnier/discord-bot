@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { getVoiceConnection } = require('@discordjs/voice')
+const { getVoiceConnection } = require('@discordjs/voice');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -7,7 +7,6 @@ module.exports = {
         .setDescription('clear the queue and skip current song'),
     async execute(interaction) {
         const connection = getVoiceConnection(interaction.guildId);
-
         if (!connection) {
             await interaction('MonkaS');
             return;
